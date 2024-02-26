@@ -311,16 +311,34 @@ struct CursorPos {
     subdivision: usize,
 }
 
+struct Toast {
+    message: Option<String>,
+    ticks: u32,
+}
+impl Default for Toast {
+    fn default() -> Self {
+        Toast {
+            message: None,
+            ticks: 0,
+        }
+    }
+}
+
 struct State {
     win: Window,
     song: Song,
     cursor: CursorPos,
     should_clear: bool,
+    should_quit: bool,
+    toast: Toast
 }
 
 impl State {
     fn schedule_clear(&mut self) {
         self.should_clear = true;
+    }
+    fn quit(&mut self) {
+        self.should_quit = true;
     }
     fn find_cursor(&self) -> (i32, i32) {
         let mut ypos: i32 = 2;
@@ -428,7 +446,7 @@ impl State {
             self.win.addch('|'); // terminating
             self.win.addstr(" ".repeat((self.win.get_max_x() - self.win.get_cur_x() - 1) as usize));
         }
-
+        self.draw_toast();
         self.win.refresh();
     }
     fn current_section(&self) -> &Section {
@@ -555,6 +573,78 @@ impl State {
             self.current_section_mut().bars[cursor.bar].chords.insert(cursor.subdivision, chord);
         }
     }
+    fn do_command_line(&mut self) {
+        let mut buf = String::new();
+
+        let mut finished = false;
+        let y= self.win.get_max_y() - 1;
+        let x = 1;
+        self.win.attron(Attribute::Reverse);
+        self.win.mvaddch(y, 0,':');
+
+        while !finished {
+            self.win.mvaddstr(y, x, &buf);
+            self.win.hline(' ', self.win.get_max_x() - buf.len() as i32);
+            let ch = self.win.getch();
+            if let Some(Input::Character(c)) = ch {
+                if c.is_ascii_alphanumeric() || c.is_ascii_punctuation() {
+                    buf.push(c);
+                } else if c == '\u{8}' {
+                    buf.pop();
+                    self.win.mvaddstr(y, x, &buf);
+                    self.win.addch(' ');
+                } else if c == ' '{
+                    // autoexpand stuff
+                    if buf == "t" {
+                        buf = "title ".to_string();
+                    } else if buf == "q" {
+                        buf = "quit".to_string();
+                    }else {
+                        buf.push(' ');
+                    }
+                }
+                 else
+                 {
+                    finished = true;
+                }
+            } else {
+                finished = true;
+            }
+        }
+        self.win.attroff(Attribute::Reverse);
+        // now parse
+        if buf.is_empty() {
+            return
+        }
+        let components = buf.split_ascii_whitespace().collect::<Vec<&str>>();
+        if components.first() == Some(&"title") && components.get(1).is_some() {
+            // set title
+            let title = components.get(1..).unwrap().join(" ");
+            self.song.title = title;
+            self.schedule_clear();
+            self.toast(&format!("Set title to '{}'.", self.song.title));
+        } else if components.first() == Some(&"quit") || components.first() == Some(&"q") {
+            self.quit();
+        }
+    }
+
+    fn draw_toast(&mut self) {
+        if let Some(message) = &self.toast.message {
+            if self.toast.ticks == 0 {
+                return;
+            }
+            self.win.attron(Attribute::Reverse);
+            self.win.mvaddstr(self.win.get_max_y() - 1, 0, message);
+            self.win.attroff(Attribute::Reverse);
+            self.toast.ticks -= 1;
+        }
+    }
+
+    fn toast(&mut self, message: &str) {
+        self.toast.message = Some(message.to_owned());
+        self.toast.ticks = 2;
+    }
+
     fn delete_chord_or_empty_bar(&mut self) {
         let cursor = self.cursor;
         let section = self.current_section_mut();
@@ -623,7 +713,9 @@ fn main() {
         win: window,
         song: Song::new(),
         cursor: CursorPos::default(),
-        should_clear: true
+        should_clear: true,
+        should_quit: false,
+        toast: Toast::default(),
     };
 
     loop {
@@ -642,6 +734,10 @@ fn main() {
                 }
                 if c == 's' {
                     state.next_or_create_section();
+                }
+                if c == ':' {
+                    println!("meow");
+                    state.do_command_line();
                 }
                 state.input_or_edit_in_place_chord(c);
             }
@@ -680,6 +776,9 @@ fn main() {
             }
             Some(input) => {}
             None => ()
+        }
+        if state.should_quit {
+            break
         }
     }
     endwin();
