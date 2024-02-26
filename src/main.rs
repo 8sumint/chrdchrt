@@ -285,7 +285,7 @@ impl Display for Quality {
             Quality::Min7 => "-7",
             Quality::Dim => "o",
             Quality::Dim7 => "o7",
-            Quality::HalfDim => "m7b7",
+            Quality::HalfDim => "m7b5",
             Quality::Aug => "+",
             Quality::Dom9 => "9",
             Quality::Maj9 => "^9",
