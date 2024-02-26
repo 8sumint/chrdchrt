@@ -1,11 +1,16 @@
 use std::fmt::{Display, Formatter};
 use pancurses::{initscr, endwin, Input, noecho, Window, curs_set, Attribute};
 use std::collections::BTreeMap;
+use std::fs;
+use std::io::Read;
 use regex::Regex;
+use serde::{Deserialize, Serialize};
+use xz2::bufread::{XzEncoder, XzDecoder};
 
 // idek
 const SECTION_LABELS: [&str; 16] = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P"];
 
+#[derive(Serialize, Deserialize)]
 struct Song {
     title: String,
     sections: Vec<Section>,
@@ -29,6 +34,7 @@ impl Song {
     }
 }
 
+#[derive(Serialize, Deserialize)]
 struct Section {
     label: String,
     bars: Vec<Bar>,
@@ -36,6 +42,7 @@ struct Section {
     wrap: usize, // bars
 }
 
+#[derive(Serialize, Deserialize)]
 struct Bar {
     beats: usize,
     subdivision: usize,
@@ -94,7 +101,7 @@ impl Bar {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 struct Chord {
     note: Note,
     accidental: Accidental,
@@ -178,7 +185,7 @@ impl Display for Chord {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 enum Note {
     A,
     B,
@@ -221,7 +228,7 @@ impl Display for Note {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
 enum Accidental {
     None,
     Sharp,
@@ -241,7 +248,7 @@ impl Display for Accidental {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
 enum Quality {
     Maj,
     Min,
@@ -278,7 +285,7 @@ impl Display for Quality {
             Quality::Min7 => "-7",
             Quality::Dim => "o",
             Quality::Dim7 => "o7",
-            Quality::HalfDim => "ø7",
+            Quality::HalfDim => "m7b7",
             Quality::Aug => "+",
             Quality::Dom9 => "9",
             Quality::Maj9 => "^9",
@@ -308,9 +315,13 @@ struct State {
     win: Window,
     song: Song,
     cursor: CursorPos,
+    should_clear: bool,
 }
 
 impl State {
+    fn schedule_clear(&mut self) {
+        self.should_clear = true;
+    }
     fn find_cursor(&self) -> (i32, i32) {
         let mut ypos: i32 = 2;
         let mut xpos: i32 = 1;
@@ -346,7 +357,7 @@ impl State {
             for subdivision in 0..bar.subdivision {
                 if let Some(chord) = bar.get_chord(subdivision) {
                     let chord_str = format!("{} ", chord);
-                    widths[idx] = chord_str.len().max(widths[idx]);
+                    widths[idx] = chord_str.chars().count().max(widths[idx]);
                 } else {
                     widths[idx] = 2.max(widths[idx]); // minimum width
                 }
@@ -355,6 +366,10 @@ impl State {
         widths
     }
     fn draw(&mut self) {
+        if self.should_clear {
+            self.win.clear();
+        }
+
         // Header
         self.win.mvprintw(0, 0, "SONG: ");
         self.win.printw(&self.song.title);
@@ -540,10 +555,21 @@ impl State {
             self.current_section_mut().bars[cursor.bar].chords.insert(cursor.subdivision, chord);
         }
     }
-    fn delete_chord(&mut self) {
+    fn delete_chord_or_empty_bar(&mut self) {
         let cursor = self.cursor;
         let section = self.current_section_mut();
-        section.bars[cursor.bar].chords.remove(&cursor.subdivision);
+        let current_bar = &section.bars[cursor.bar];
+        if current_bar.chords.is_empty() && section.bars.len() > 1 {
+            section.bars.remove(cursor.bar);
+            // put the cursor somewhere nice
+            if cursor.bar >= section.bars.len() {
+                self.cursor.bar -= 1;
+            }
+            self.schedule_clear();
+
+        } else {
+            section.bars[cursor.bar].chords.remove(&cursor.subdivision);
+        }
     }
     fn next_or_create_section(&mut self) {
         if self.cursor.section + 1 < self.song.sections.len() {
@@ -578,6 +604,13 @@ impl State {
             self.cursor.bar = self.song.sections[self.cursor.section].bars.len();
         }
     }
+    fn save_to_disk(&self) {
+        let encoded: Vec<u8> = bincode::serialize(&self.song).unwrap();
+        let mut compressor = XzEncoder::new(encoded.as_slice(), 9);
+        let mut compressed: Vec<u8> = vec![];
+        compressor.read_to_end(&mut compressed).unwrap();
+        fs::write("./out.chartz", compressed).expect("Unable to write file");
+    }
 }
 
 fn main() {
@@ -590,6 +623,7 @@ fn main() {
         win: window,
         song: Song::new(),
         cursor: CursorPos::default(),
+        should_clear: true
     };
 
     loop {
@@ -613,11 +647,14 @@ fn main() {
             }
             Some(Input::KeyDC) => {
                 // DEL
-                state.delete_chord();
+                state.delete_chord_or_empty_bar();
             }
             Some(Input::KeyF1) => {
                 state.song.sections[state.cursor.section].bars[state.cursor.bar].try_reduce_subdivision();
                 state.win.touch();
+            }
+            Some(Input::KeyF12) => {
+                state.save_to_disk();
             }
             Some(Input::KeyF4) => {
                 state.next_or_create_bar();
