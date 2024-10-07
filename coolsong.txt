@@ -1,0 +1,364 @@
+{
+  "title": "untitled",
+  "sections": [
+    {
+      "label": "A",
+      "bars": [
+        {
+          "beats": 4,
+          "subdivision": 4,
+          "chords": {
+            "0": {
+              "note": "C",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": null,
+              "special": false,
+              "question": false
+            },
+            "2": {
+              "note": "C",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": "E",
+              "special": false,
+              "question": false
+            }
+          }
+        },
+        {
+          "beats": 4,
+          "subdivision": 4,
+          "chords": {
+            "0": {
+              "note": "F",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": null,
+              "special": false,
+              "question": false
+            },
+            "2": {
+              "note": "G",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": "F",
+              "special": false,
+              "question": false
+            }
+          }
+        },
+        {
+          "beats": 4,
+          "subdivision": 4,
+          "chords": {
+            "0": {
+              "note": "E",
+              "accidental": "None",
+              "quality": "Min",
+              "over": null,
+              "special": false,
+              "question": false
+            },
+            "2": {
+              "note": "A",
+              "accidental": "None",
+              "quality": "Min",
+              "over": null,
+              "special": false,
+              "question": false
+            }
+          }
+        },
+        {
+          "beats": 4,
+          "subdivision": 4,
+          "chords": {
+            "0": {
+              "note": "D",
+              "accidental": "None",
+              "quality": "Min7",
+              "over": null,
+              "special": false,
+              "question": false
+            },
+            "2": {
+              "note": "F",
+              "accidental": "None",
+              "quality": "Min6",
+              "over": null,
+              "special": false,
+              "question": false
+            }
+          }
+        },
+        {
+          "beats": 4,
+          "subdivision": 4,
+          "chords": {
+            "0": {
+              "note": "C",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": null,
+              "special": false,
+              "question": false
+            },
+            "1": {
+              "note": "C",
+              "accidental": "None",
+              "quality": "Dom7",
+              "over": null,
+              "special": false,
+              "question": false
+            },
+            "2": {
+              "note": "F",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": null,
+              "special": false,
+              "question": false
+            },
+            "3": {
+              "note": "G",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": "F",
+              "special": false,
+              "question": false
+            }
+          }
+        }
+      ],
+      "repeats": false,
+      "wrap": 4
+    },
+    {
+      "label": "B",
+      "bars": [
+        {
+          "beats": 4,
+          "subdivision": 4,
+          "chords": {
+            "0": {
+              "note": "C",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": null,
+              "special": false,
+              "question": false
+            }
+          }
+        },
+        {
+          "beats": 4,
+          "subdivision": 4,
+          "chords": {
+            "3": {
+              "note": "F",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": "G",
+              "special": false,
+              "question": false
+            }
+          }
+        }
+      ],
+      "repeats": false,
+      "wrap": 4
+    },
+    {
+      "label": "C",
+      "bars": [
+        {
+          "beats": 4,
+          "subdivision": 4,
+          "chords": {
+            "0": {
+              "note": "C",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": null,
+              "special": false,
+              "question": false
+            },
+            "2": {
+              "note": "C",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": "E",
+              "special": false,
+              "question": false
+            }
+          }
+        },
+        {
+          "beats": 4,
+          "subdivision": 8,
+          "chords": {
+            "0": {
+              "note": "F",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": null,
+              "special": false,
+              "question": false
+            }
+          }
+        },
+        {
+          "beats": 4,
+          "subdivision": 4,
+          "chords": {
+            "0": {
+              "note": "D",
+              "accidental": "None",
+              "quality": "Min7",
+              "over": null,
+              "special": false,
+              "question": false
+            }
+          }
+        },
+        {
+          "beats": 4,
+          "subdivision": 2,
+          "chords": {
+            "0": {
+              "note": "G",
+              "accidental": "None",
+              "quality": "Dom7",
+              "over": null,
+              "special": false,
+              "question": false
+            },
+            "1": {
+              "note": "G",
+              "accidental": "None",
+              "quality": "Dom7",
+              "over": "F",
+              "special": false,
+              "question": false
+            }
+          }
+        },
+        {
+          "beats": 4,
+          "subdivision": 4,
+          "chords": {
+            "0": {
+              "note": "C",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": "E",
+              "special": false,
+              "question": false
+            },
+            "2": {
+              "note": "A",
+              "accidental": "None",
+              "quality": "Min",
+              "over": null,
+              "special": false,
+              "question": false
+            },
+            "3": {
+              "note": "G",
+              "accidental": "None",
+              "quality": "Min",
+              "over": null,
+              "special": false,
+              "question": false
+            }
+          }
+        },
+        {
+          "beats": 4,
+          "subdivision": 8,
+          "chords": {
+            "0": {
+              "note": "F",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": null,
+              "special": false,
+              "question": false
+            },
+            "1": {
+              "note": "E",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": null,
+              "special": false,
+              "question": false
+            },
+            "2": {
+              "note": "D",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": null,
+              "special": false,
+              "question": false
+            },
+            "3": {
+              "note": "C",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": null,
+              "special": false,
+              "question": false
+            },
+            "4": {
+              "note": "B",
+              "accidental": "Flat",
+              "quality": "Maj",
+              "over": null,
+              "special": false,
+              "question": false
+            }
+          }
+        },
+        {
+          "beats": 4,
+          "subdivision": 4,
+          "chords": {
+            "0": {
+              "note": "F",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": null,
+              "special": false,
+              "question": false
+            },
+            "3": {
+              "note": "C",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": "E",
+              "special": false,
+              "question": false
+            }
+          }
+        },
+        {
+          "beats": 4,
+          "subdivision": 2,
+          "chords": {
+            "0": {
+              "note": "D",
+              "accidental": "None",
+              "quality": "Maj",
+              "over": null,
+              "special": false,
+              "question": false
+            }
+          }
+        }
+      ],
+      "repeats": false,
+      "wrap": 4
+    }
+  ]
+}
